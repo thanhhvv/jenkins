@@ -1,31 +1,36 @@
 pipeline {
-  agent any
+    agent any
 
-  stages {
-    stage('Clone') {
-      steps {
-        git url: 'https://github.com/thanhhvv/jenkins.git', branch: 'main'
-      }
+    environment {
+        PROJECT_ID = 'hovietvuthanh-project'  // thay bằng project thực tế
+        GOOGLE_APPLICATION_CREDENTIALS = 'hovietvuthanh-project-c53d796e3e8e.json'
     }
-    stage('Install') {
-      steps {
-        echo 'First step'
-      }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git url: 'https://github.com/thanhhvv/jenkins.git', branch: 'main'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                withCredentials([file(credentialsId: 'FIREBASE_KEY_JSON', variable: 'FIREBASE_KEY')]) {
+                    sh '''
+                        export GOOGLE_APPLICATION_CREDENTIALS=/absolute/path/to/credentials/file.json
+firebase deploy --only hosting --project=hovietvuthanh-project
+                    '''
+                }
+            }
+        }
     }
-    stage('Test') {
-      steps {
-        echo 'Second step'
-      }
+
+    post {
+        success {
+            echo 'Deploy thành công'
+        }
+        failure {
+            echo 'Deploy thất bại'
+        }
     }
-    stage('Build') {
-      steps {
-        echo 'Third step'
-      }
-    }
-    stage('Deploy') {
-      steps {
-        echo 'Fourth step'
-      }
-    }
-  }
 }
