@@ -17,7 +17,7 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'FIREBASE_KEY_JSON', variable: 'FIREBASE_KEY')]) {
                     sh '''
-                        firebase --version
+                        export GOOGLE_APPLICATION_CREDENTIALS=/hovietvuthanh-project-c53d796e3e8e.json
                         firebase deploy --only hosting --project=hovietvuthanh-project
                     '''
                 }
