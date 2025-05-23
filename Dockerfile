@@ -9,10 +9,15 @@ RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y ansible && \
     apt-get clean
 
+# Install ngrok
+RUN curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | gpg --dearmor -o /usr/share/keyrings/ngrok-archive-keyring.gpg \
+    && echo "deb [signed-by=/usr/share/keyrings/ngrok-archive-keyring.gpg] https://ngrok-agent.s3.amazonaws.com buster main" | tee /etc/apt/sources.list.d/ngrok.list \
+    && apt-get update && apt-get install -y ngrok
+
 USER jenkins
 
 # Cài đặt curl, unzip và các thư viện cần thiết
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y \ 
     curl \
     unzip \
     groff \

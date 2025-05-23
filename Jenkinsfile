@@ -1,34 +1,31 @@
 pipeline {
-    agent any
+  agent any
 
-    stages {
-        stage('Pre-check: Test') {
-            steps {
-                echo "🔍 Đang chạy kiểm tra index.html..."
-                sh 'chmod +x test/test.sh'
-                sh './test/test.sh'
-            }
-        }
-
-        stage('Deploy to Server') {
-            steps {
-                echo "🚀 Đang thực hiện deploy đến server..."
-                sshagent(credentials: ['ssh-cred-id']) {
-                    sh '''
-                        ssh user@your-server "mkdir -p ~/deploy"
-                        scp app/index.html user@your-server:~/deploy/index.html
-                    '''
-                }
-            }
-        }
+  stages {
+    stage('Clone') {
+      steps {
+        git url: 'https://github.com/thanhhvv/jenkins.git', branch: 'main'
+      }
     }
-
-    post {
-        success {
-            echo "✅ Deploy thành công!"
-        }
-        failure {
-            echo "❌ Có lỗi xảy ra trong pipeline!"
-        }
+    stage('Install') {
+      steps {
+        sh 'npm install'
+      }
     }
+    stage('Test') {
+      steps {
+        sh 'npm test'
+      }
+    }
+    stage('Build') {
+      steps {
+        sh 'npm run build'
+      }
+    }
+    stage('Deploy') {
+      steps {
+        sh './deploy.sh'  // or use rsync, docker, etc.
+      }
+    }
+  }
 }
