@@ -9,22 +9,22 @@ pipeline {
     }
     stage('Install') {
       steps {
-        echo 'First step'
+        sh 'npm install'
       }
     }
     stage('Test') {
       steps {
-        echo 'Second step'
+        sh 'npm test'
       }
     }
     stage('Build') {
       steps {
-        echo 'Third step'
+        sh 'npm run build'
       }
     }
     stage('Deploy') {
       steps {
-        echo 'Fourth step'
+        sh './deploy.sh'  // or use rsync, docker, etc.
       }
     }
   }
